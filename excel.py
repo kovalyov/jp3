@@ -2,7 +2,7 @@ import datetime
 from openpyxl import load_workbook
 
 time = datetime.datetime.now().strftime("_%I_%M_%S_%B_%d_%Y")
-print("Введите название файла :\n", "Пример - C:/Users/%USERNAME%/PycharmProjects/untitled/first_file.xlsx")
+# print("Введите название файла :\n", "Пример - C:/Users/%USERNAME%/PycharmProjects/untitled/first_file.xlsx")
 # file_name = input() + ".xlsx"
 file_name = 'first_file.xlsx'
 
