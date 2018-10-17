@@ -1,23 +1,35 @@
 import datetime
+
+import datetime as datetime
 from openpyxl import load_workbook
 import re
+from WorkingDay import end
 import sys
 
-#************************* Load XLSX file for analyze **************************************#
+# ************************* Load XLSX file for analyze **************************************#
 
 time = datetime.datetime.now().strftime("_%I_%M_%S_%B_%d_%Y")
 # print("Введите название файла :\n", "Пример - C:/Users/%USERNAME%/PycharmProjects/untitled/first_file.xlsx")
 # file_name = input() + ".xlsx"
-file_name = 'C:/Users/ohrabar/Desktop/SiteTimeDetailsReport.xlsx'
+file_name = 'SiteTimeDetailsReport.xlsx'
 
-#************************* Load TXT file with EmployeesFileName ****************************#
-employeesFileName = 'C:/Users/ohrabar/Desktop/names.txt'
+print("==================")
+print(end)
+print("==================")
+
+# ************************* Load New Template.xlsx file for saving result *************************#
+output = 'reports/NewTemplate.xlsx'
+wb_output = load_workbook(output)
+sheet_output = wb_output['Timesheet']
+
+# ************************* Load TXT file with EmployeesFileName ****************************#
+employeesFileName = 'EmployeesFileName.txt'
 file = open(employeesFileName, 'r')
 s = file.read()
 employees = re.split(r', ', s)
 file.close()
 
-#************************** Load in the workbook ********************************************#
+# ************************** Load in the workbook ********************************************#
 wb = load_workbook(file_name)
 # Get sheet names
 print(wb.sheetnames)
@@ -28,7 +40,7 @@ print("Works in sheet: ", str(sheet.title))
 ch = 'A'
 row = 1
 
-sheet['T1'] = "Total Time"      # создаем ячейку "Total Time" в которую будем вносить значения общего времени
+# sheet['T1'] = "Total Time"  # создаем ячейку "Total Time" в которую будем вносить значения общего времени
 
 EmployeeColumn = 0
 DateEntryColumn = 0
@@ -36,22 +48,16 @@ EmployeeTimeOnTaskColumn = 0
 TotalTimeColumn = 0
 rows = {}
 
-while chr(ord(ch)) <= "Z":      # Limitation a range of columns
+# ************************* Define columns for work in the file SiteTimeDetailsReport ********#
+while chr(ord(ch)) <= "Z":  # Limitation a range of columns
     # print("Column Symbol:", ch)
-
     cell = sheet[str(ch) + str(row)]
-    # print("Value: ", cell.value)
     if cell.value == "Employee":
         EmployeeColumn = cell.column
     if cell.value == "Entry Date":
         DateEntryColumn = cell.column
     if cell.value == "Employee Time On Task":
         EmployeeTimeOnTaskColumn = cell.column
-    if cell.value == "Total Time":
-        TotalTimeColumn = cell.column
-    # print("Row: ",cell.row)
-    # print("Column: ",cell.column)
-    # print("Coordinate: ", cell.coordinate, "\n==================|")
     ch = chr(ord(ch) + 1)
     # row += 1
 
@@ -60,10 +66,12 @@ while chr(ord(ch)) <= "Z":      # Limitation a range of columns
 # print("Third EmployeeTimeOnTask : ", str(EmployeeTimeOnTaskColumn))
 # print("Total Time               : ", str(TotalTimeColumn))
 
+
+# *************************** Sort data by Employees with values ********************************#
 for i in employees:
     print("\n")
     print(i)
-##################################################################
+    ##################################################################
     total_hours = 0
     empty_dates = []
     row_2 = 4
@@ -72,22 +80,50 @@ for i in employees:
         # print(i, '/n')
         # print(sheet[str(column_1) + str(row_2)].value)
         if sheet[str(EmployeeColumn) + str(row_2)].value == i:
-            #print(str(sheet[str(column_3) + str(row + 3)].value))
+            # print(str(sheet[str(column_3) + str(row + 3)].value))
+
             if sheet[str(EmployeeTimeOnTaskColumn) + str(row_2)].value is None:
-                empty_dates.append(str(sheet[str(DateEntryColumn) + str(row_2)].value))
+                if type(sheet[str(DateEntryColumn) + str(row_2)].value) is not datetime.datetime:
+                    # empty_dates.append(str(sheet[str(DateEntryColumn) + str(row_2)].value))
+                    formated_day = datetime.datetime.strptime(str(sheet[str(DateEntryColumn) + str(row_2)].value), '%m/%d/%Y')
+                    empty_dates.append(formated_day)
+                else:
+                    empty_dates.append(str(sheet[str(DateEntryColumn) + str(row_2)].value))
+
             else:
                 total_hours += int(sheet[str(EmployeeTimeOnTaskColumn) + str(row_2)].value)
         row_2 += 1
     print("Quantity of hours: ", total_hours)
     if len(empty_dates) != 0:
-       print("Empty dates: ", empty_dates)
+        print("Empty dates: ", empty_dates)
 
+        # item = empty_dates[0]
+        # print(str(item.month))
 
+# *************************** Go to NewTemplate.xlsx and work with it ****************************#
+output = 'reports/NewTemplate.xlsx'
+wb_output = load_workbook(output)
+sheet_output = wb_output['Timesheet']
+print("Works in sheet: ", str(sheet_output))
+sheet_output["I3"] = end
 
+EmployeeName = 0
+ch2 = "A"
+row_3 = 7
+while chr(ord(ch2)) <= "Z":  # Limitation a range of columns
+    cell2 = sheet_output[str(ch2) + str(row_3)]  # try found "Employee Name" cell in the NewTemplate.xlsx file
+    if cell2.value == "Employee Name":
+        EmployeeName = cell2.column
+    ch2 = chr(ord(ch2) + 1)
 
-    # if not list(empty_dates):
-    #     if list(empty_dates):
-    #         print("OK")
+print("Employee Letter  : ", str(EmployeeName))  # Defined the letter of the column
+
+while sheet_output[str(EmployeeName) + str(row_3)].value is not None:
+    row_3 += 1
+    for i in employees:
+        sheet_output[str(EmployeeName) + str(row_3)].value = i
+        row_3 += 1
+
 #################################################################
 
 # while sheet[str(EmployeeColumn) + str(row + 1)].value is not None:
@@ -99,5 +135,5 @@ for i in employees:
 #     row += 1
 #
 
-#wb.save("reports/template" + time + ".xlsx")
 
+# wb_output.save("reports/NewTemplate" + time + ".xlsx")

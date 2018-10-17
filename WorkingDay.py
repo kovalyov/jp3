@@ -3,7 +3,7 @@ import datetime
 
 # today = datetime.datetime.now() #текущий день для реальной работы
 today = datetime.date(2018, 10, 9)  # текущий день для тестирования
-print("Current day: ", today)
+print("Current day: ", type(today))
 weekday = (today.weekday())  # порядковый номер дня недели 0-ПН, 6-ВС
 
 
