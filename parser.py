@@ -17,7 +17,7 @@ DEFAULT_EMPLOYEES_NAME = '''Employees File Name.txt'''
 DEFAULT_DST_XLS_NAME = '''New Template.xlsx'''
 DEFAULT_SPREADSHEET = 0
 RELAUNCH_APPLICATION = '''Excel.Application'''
-SOURCE_PATH_NAME_FOR_PROJECT = '''C:/Users/ohrabar/PycharmProjects/jp3_2'''
+SOURCE_PATH_NAME_FOR_PROJECT = '''C:/Users/name/PycharmProjects/jp3_2'''
 # Some col titles. Change if needed
 DEFAULT_NAME = 'Employee'
 DEFAULT_DATE = 'Entry Date'
