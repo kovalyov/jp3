@@ -1,9 +1,9 @@
 import calendar
 import datetime
 
-# today = datetime.datetime.now() #текущий день для реальной работы
-today = datetime.date(2018, 10, 9)  # текущий день для тестирования
-print("Current day: ", type(today))
+#today = datetime.date.today() #текущий день для реальной работы
+today = datetime.date(2018, 1, 1)  # текущий день для тестирования
+print("Current day: ", today)
 weekday = (today.weekday())  # порядковый номер дня недели 0-ПН, 6-ВС
 
 
@@ -57,8 +57,7 @@ if today.day >= 26:
 elif weekday >= 4:
     # Fr,Sa,Su
     daydiff = today.weekday() - start.weekday()
-    days = (((today - start).days - daydiff) / 7 * 5 + min(daydiff, 5) - (
-            max(today.weekday() - 4, 0) % 5)) + 1
+    days = (((today - start).days - daydiff) / 7 * 5 + min(daydiff, 5) - (max(today.weekday() - 4, 0) % 5)) + 1
     if weekday == 6:
         days += 1
     print("==================== 2 if ===================\n", "today -", today.day, "| weekday:", weekday,
